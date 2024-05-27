@@ -1,7 +1,26 @@
 /** Reemplazar por la solución del enunciado */
 
-class Marca {
-	
+//class Marca {
+//	method utilidad(cosa) 
+//}
+
+//Marcas
+object acme {
+	method utilidad(cosa) {
+		return cosa.volumen() / 2
+	}
+}
+
+object cuchuflito {
+	method utilidad(cosa) {
+		return 0
+	}	
+}
+
+object fenix {
+	method utilidad(cosa) {
+		return if(cosa.reliquia()) 3 else 0
+	}	
 }
 
 class CosaGuardable {
@@ -10,6 +29,22 @@ class CosaGuardable {
 	var property marca // una instanacia de Marca?
 	var property magico //booleano
 	var property reliquia //booleano
+	
+	method utilidad() {
+		return self.volumen() + self.utilidadSiMagica() + self.utilidadSiReliquia() + self.utilidadPorMarca() 
+	}
+	
+	method utilidadSiMagica() {
+		return if (magico) 3 else 0
+	}
+	
+	method utilidadSiReliquia() {
+		return if (reliquia) 5 else 0
+	}
+	
+	method utilidadPorMarca() {
+		return marca.utilidad(self)
+	}
 
 }
 
@@ -34,6 +69,16 @@ class Mueble {
 	 	self.validarGuardar(cosa)
 	 	cosas.add(cosa)
 	 }
+	 
+	 method utilidad() {
+	 	 return self.utilidadDeLasCosas() / self.precio()	
+	 }
+	 
+	 method utilidadDeLasCosas() {
+	 	return cosas.sum({cosa => cosa.utilidad()})
+	 }
+	 
+	 method precio() 
 }
 
 class Baul inherits Mueble {
@@ -50,12 +95,37 @@ class Baul inherits Mueble {
 	method volumenActual() {
 		return cosas.sum({cosa => cosa.volumen()})
 	} 
+	
+	override method precio() {
+		return volumenMaximo + 2
+	}
+	
+	override method utilidad() {
+		return super() + self.extraSiReliquias()	
+	}
+	
+	method extraSiReliquias() {
+		return if (self.todasReliquias()) 2 else 0
+	}
+	
+	method todasReliquias() {
+		return cosas.all({cosa => cosa.reliquia()})
+	}
 }
 
 class GabineteMagico inherits Mueble {
+	
+	const precio
+	
 	override method puedeGuardar(cosa) {
 		return super(cosa) and cosa.magico() 
 	}
+	
+	override method precio() {
+		return precio
+	}
+	
+	
 	
 }
 
@@ -70,6 +140,9 @@ class Armario inherits Mueble{
 		return cantidadMaxima > cosas.size() 
 	}
 
+	override method precio() {
+		return 5 * cantidadMaxima
+	}
 }
 
 class Academia {
