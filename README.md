@@ -134,7 +134,8 @@ todas las cosas que almacena son reliquias.
 ```
 
 Existen también **Baúles Mágicos**, el cual además de tener un extra de 2 en la utilidad si todas las
-cosas que almacena son reliquias, también suma 1 por cada elemento mágico, pero su precio es el doble que 
+cosas que almacena son reliquias, también suma 1 por cada elemento mágico, 
+pero su precio es el doble que 
 un baul no mágico.
 
 ```

@@ -79,6 +79,14 @@ class Mueble {
 	 }
 	 
 	 method precio() 
+	 
+	 method menosUtil() {
+	 	return cosas.min({cosa => cosa.utilidad()})
+	 }
+	 
+	 method remover(cosa) {
+	 	cosas.remove(cosa)	
+	 }
 }
 
 class Baul inherits Mueble {
@@ -101,16 +109,36 @@ class Baul inherits Mueble {
 	}
 	
 	override method utilidad() {
-		return super() + self.extraSiReliquias()	
+		return super() + self.extra()	
 	}
 	
-	method extraSiReliquias() {
+	method extra() {
 		return if (self.todasReliquias()) 2 else 0
 	}
 	
 	method todasReliquias() {
 		return cosas.all({cosa => cosa.reliquia()})
 	}
+}
+
+class BaulMagico inherits Baul {
+	 
+	 override method extra(){
+	 	return super() + self.cantidadMagicos()
+	 }
+	 
+	 method cantidadMagicos() {	 	
+	 	//filter + size = count
+	 	//flatMap = map + flatten
+	 	//find = filter + anyOne
+	 	//max(bloque por cond).cond =  map + max 
+	 	
+	 	return cosas.count({cosa => cosa.magico()})   
+	 }
+	 
+	 override method precio() {
+	 	return super() * 2
+	 }  
 }
 
 class GabineteMagico inherits Mueble {
@@ -146,7 +174,7 @@ class Armario inherits Mueble{
 }
 
 class Academia {
-	const muebles = #{}
+	var property muebles = #{}
 	
 	method tiene(cosa) {
 		return muebles.any({mueble => mueble.tiene(cosa)})
@@ -187,6 +215,38 @@ class Academia {
 	method guardar(cosa) {
 		self.validarGuardar(cosa)
 		self.elegirMueble(cosa).guardar(cosa)
+	}
+	
+	method remover(cosa) {
+		const mueble = self.dondeGuarda(cosa)
+		mueble.remover(cosa)	
+	}
+	
+	method menosUtiles() {
+		return muebles.map({mueble => mueble.menosUtil()}).asSet()
+	}
+	
+	method elMenosUtil() {
+		return self.menosUtiles().min({cosa => cosa.utilidad()})
+	}
+	method marcaCosaMenosUtil() {
+		return self.elMenosUtil().marca() 
+	}
+	
+	method validarRemoverUtilesNoMagicas(){
+		if (muebles.size() < 3) {
+			self.error("No hayt muebles suficientes")
+		}
+	}
+	
+	method menosUtilesNoMagicas() {
+		return self.menosUtiles().filter({cosa => not cosa.magico()})
+	}
+	method removerMenosUtilesNoMagicas() {
+		self.validarRemoverUtilesNoMagicas()
+		self.menosUtilesNoMagicas().forEach( {
+			cosa => self.remover(cosa)
+		})	
 	}
 }	
 
